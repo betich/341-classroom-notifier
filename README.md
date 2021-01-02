@@ -1,6 +1,6 @@
 # classroom-notifier
 yes.
-##TODO
+## TODO
 1. Embed Sender
 2. Time table
     1. Static time table
