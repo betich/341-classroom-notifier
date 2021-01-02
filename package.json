@@ -1,0 +1,24 @@
+{
+  "name": "341-classroom-notifier",
+  "version": "1.0.0",
+  "description": "yes. ##TODO 1. Embed Sender 2. Time table     1. Static time table     2. Dynamic time table 3. Home work",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betich/341-classroom-notifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/betich/341-classroom-notifier/issues"
+  },
+  "homepage": "https://github.com/betich/341-classroom-notifier#readme"
+}
