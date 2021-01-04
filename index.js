@@ -10,9 +10,9 @@ TODO:
 const fs 		= 	require('fs');
 const Discord 	= 	require('discord.js');
 const config 	= 	require('./config.json');
-const prefix 	= 	config.prefix;
 const token		= 	require('./token.json').token;
 const onlineClass = require('./OnlineClass/onlineClass.js');
+const prefix 	= 	config.prefix;
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
