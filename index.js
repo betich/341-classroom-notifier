@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const config = require('./config.json');
 const prefix = config.prefix;
 const token = require('./token.json').token;
+const onlineClass = require('./OnlineClass/onlineClass.js');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -16,6 +17,24 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
+	client.channels.fetch(config.default_channel)
+	.then (chan => {
+		const tmp = require('./OnlineClass/testObject.json');
+		const OC1 = new onlineClass(tmp[0]);
+		const OC2 = new onlineClass(tmp[1]);
+		chan.send('These 2 Message are for testing.');
+		OC1.sendEmbed(chan);
+		OC2.sendEmbed(chan);
+
+		//
+		// SetInterval for auto
+		//
+
+	})
+	.catch (error => {
+		console.error(error);
+	})
+
 	console.log('Ready!');
 });
 
