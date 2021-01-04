@@ -1,3 +1,6 @@
+# Token file
+token.json
+
 # Logs
 logs
 *.log
@@ -102,6 +105,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-# Token file
-token.json

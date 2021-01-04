@@ -25,6 +25,6 @@ module.exports = {
                 {name: 'Class', value: 'Math'},
                 {name: 'Time', value: '14.10 - 15.00', inline: true}
             );
-            message.channel.send(embed);
+        message.channel.send(embed);
     }
 };
