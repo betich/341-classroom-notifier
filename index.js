@@ -1,12 +1,3 @@
-/*
-NOTE: stopspam.js, setStatus are temporary
-CHANGELOG:
-* add notificaiton system (setup, stopspam, notify)
-* change smth
-TODO:
-* connect to sheets db
-*/
-
 const fs 		= 	require('fs');
 const Discord 	= 	require('discord.js');
 const config 	= 	require('./config.json');

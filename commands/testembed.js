@@ -5,7 +5,6 @@ module.exports = {
 	description: 'testembed!',
 	aliases: [],
 	execute(message) {
-        console.log('hello');
         SE.sendembed(message);
 	}
 };

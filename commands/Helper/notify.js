@@ -1,18 +1,28 @@
 const prefix = require('../../config.json').prefix;
+const time = require('./time');
 let spamming = false;
 let spamChannel = undefined;
 
-// spam function repeats until variable spamming is false
-function spam() {
+const periods = {
+    "c1": "07:50",
+    "c2": "08:40",
+    "c3": "09:40",
+    "c4": "10:30",
+    "c5": "12:20",
+    "c6": "13:10",
+    "c7": "14:10",
+    "c8": "15:00"
+};
+
+function notify() {
     return new Promise((resolve, reject) => {
-        // add check to make sure discord channel exists
         if (!spamChannel) reject('unknown channel, please run ' + prefix + 'setup');
 
-        spamChannel.send('spam1')
+        spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
         .then(msg => {
             setTimeout(() => {
                 if (spamming) {
-                    spam()
+                    notify() // recursion
                     .then(resolve) // not entirely necessary, but good practice
                     .catch(error => {
                         console.log('error while sending message kub');
@@ -23,7 +33,7 @@ function spam() {
                 else {
                     resolve();
                 }
-            }, 1 * 3 * 1000) // 3 seconds
+            }, 1 * 5 * 1000) // 5 seconds
         })
         .catch(error => {
             console.log('error kub');
@@ -46,13 +56,12 @@ module.exports = {
 
         // update spamming flag
         spamming = spamStatus;
-
         // if spamming should start, and it hasn't started already, call spam()
         if (spamStatus && currentStatus != spamStatus) {
-            spam();
-        }
+            notify();
+        }            
     },
 
-    // not used in my commands, but you may find this useful somewhere
-    getStatus: () => spamming
+    getStatus: () => spamming,
+    getChannel: () => spamChannel
 };
