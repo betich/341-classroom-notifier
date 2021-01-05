@@ -22,15 +22,15 @@ Then install dependencies
 npm i
 ```
 
-setup token file
-token.json
+Setup token file
+token.json:
 ```json
 {
     "token": "<your token here>"
 }
 ```
 
-run bot
+Run bot
 ```bash
 node index.js
 ```
