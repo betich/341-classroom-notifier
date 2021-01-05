@@ -1,9 +1,36 @@
 # classroom-notifier
 yes.
+
 ## TODO
-1. Embed Sender
-2. Time table
-    1. Static time table
-    2. Dynamic time table
-3. Auto Notification
-4. Home work
+- [x] Embed Sender
+- [x] Time table
+- [x] Static time table
+- [x] Dynamic time table
+- [ ] Time Table API
+- [ ] Auto Notification
+- [ ] Home work
+
+## How to set up
+First clone the repository
+```bash
+git clone https://github.com/betich/341-classroom-notifier
+cd 341-classroom-notifier
+```
+
+Then install dependencies
+```bash
+npm i
+```
+
+Setup token file
+token.json:
+```json
+{
+    "token": "<your token here>"
+}
+```
+
+Run bot
+```bash
+node index.js
+```
