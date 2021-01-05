@@ -1,6 +1,7 @@
 const notify = require('./helper/notify.js');
 const fs = require('fs');
-const { config } = require('process');
+// const { config } = require('process');
+const cfgPath = './config.json';
 
 module.exports = {
 	name: 'setup',
@@ -9,13 +10,17 @@ module.exports = {
 	execute(msg) {
         if (notify.getChannel() !== msg.channel) {
             notify.setChannel(msg.guild.channels.cache.get(msg.channel.id));
-            msg.channel.send(`bound to <#${msg.channel.id}> !`);
-            cfg = require('../config.json');
-            const m = JSON.stringify({...cfg,default_channel: msg.channel.id}, null, 4);
-            console.log(m);
-            //thank for helping
-            fs.writeFileSync('../config.json', m, (err) => {
-                if(err) console.error('cant write file');
+            msg.channel.send(`bound to <#${msg.channel.id}>!`);
+            fs.readFile(cfgPath, (err, data) => {
+                if (err) throw err;
+                let cfg = JSON.parse(data);
+
+                cfg.default_channel = msg.channel.id;
+                
+                fs.writeFile(cfgPath, JSON.stringify(cfg), (err) => {
+                    if (err) throw err;
+                    console.log(`changed defualt channel to ${msg.channel.name}`);
+                });
             });
         } else {
             msg.channel.send('already bound!');
