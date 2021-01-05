@@ -21,6 +21,7 @@ function notify() {
         spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
         .then(msg => {
             setTimeout(() => {
+            process.nextTick(() => {
                 if (spamming) {
                     notify() // recursion
                     .then(resolve) // not entirely necessary, but good practice
@@ -33,7 +34,8 @@ function notify() {
                 else {
                     resolve();
                 }
-            }, 1 * 5 * 1000) // 5 seconds
+            }) // immediately
+            }, 1 * 5 * 1000) // remove later
         })
         .catch(error => {
             console.log('error kub');

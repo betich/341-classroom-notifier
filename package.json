@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.5.1"
+    "discord.js": "^12.5.1",
+    "googleapis": "^39.2.0",
+    "install": "^0.13.0"
   },
   "devDependencies": {},
   "scripts": {
