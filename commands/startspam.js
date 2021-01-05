@@ -1,4 +1,4 @@
-const notify = require('./helper/notify');
+const notify = require('./helper/notify.js');
 
 module.exports = {
 	name: 'start',

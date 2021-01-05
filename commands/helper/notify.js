@@ -16,7 +16,7 @@ const periods = {
 
 function notify() {
     return new Promise((resolve, reject) => {
-        if (!spamChannel) reject('unknown channel, please run ' + prefix + 'setup');
+        if (!spamChannel) reject(`unknown channel, please run ${prefix}setup`);
 
         spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
         .then(msg => {
