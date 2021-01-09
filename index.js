@@ -1,9 +1,19 @@
-const fs 		= 	require('fs');
-const Discord 	= 	require('discord.js');
-const config 	= 	require('./config.json');
-const token		= 	require('./token.json').token;
-const onlineClass = require('./onlineclass/onlineClass.js');
-const prefix 	= 	config.prefix;
+const fs 			= 	require('fs');
+const Discord 		= 	require('discord.js');
+const config 		= 	require('./config.json');
+const discordToken	= 	require('./discordtoken.json').token;
+const onlineClass 	=	require('./onlineclass/onlineClass.js');
+const sheetsapi		=	require('./commands/helper/sheetsapi');
+const prefix 		=	config.prefix;
+
+// SHEETS API
+
+// Load client secrets from a local file.
+
+// TODO sheetsapi.authorize returns a value
+sheetsapi.authorize('credentials.json', sheetsapi.listData('A:E'));
+
+// DISCORD
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -52,7 +62,7 @@ client.on('message', message => {
 });
 
 try {
-    client.login(token);
+    client.login(discordToken);
 } catch (error) {
 	console.error('Can\'t login with this token / token missing');
     throw error;
