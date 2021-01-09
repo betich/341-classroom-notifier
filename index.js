@@ -23,9 +23,6 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 commandFiles.forEach(file => {
 	let command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
-	command.aliases.forEach((alias) => {
-		if (alias) client.commands.set(alias, command);
-	})
     console.log(`loaded ${command.name}`);
 });
 
@@ -49,12 +46,13 @@ client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
+	const commandName = args.shift().toLowerCase();
+	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-	if (!client.commands.has(command)) return message.channel.send('unknown command i sus');;
+	if(!command) return;
 
 	try {
-		client.commands.get(command).execute(message, args);
+		command.execute(message, args);
 	} catch (error) {
 		message.reply('error kub');
 		throw error;

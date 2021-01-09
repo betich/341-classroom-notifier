@@ -1,7 +1,8 @@
 const prefix = require('../../config.json').prefix;
 const time = require('./time');
 let spamming = false;
-let spamChannel = undefined;
+let spamChannel = require('../../config.json').default_channel || undefined;
+console.log(spamChannel);
 
 const periods = {
     "c1": "07:50",
