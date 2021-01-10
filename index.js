@@ -6,12 +6,7 @@ const onlineClass 	=	require('./onlineclass/onlineClass.js');
 const sheetsapi		=	require('./commands/helper/sheetsapi');
 const prefix 		=	config.prefix;
 
-// SHEETS API
-
-// Load client secrets from a local file.
-
-// TODO sheetsapi.authorize returns a value
-sheetsapi.authorize('credentials.json', sheetsapi.listData('A:E'));
+sheetsapi.getData(); // test api
 
 // DISCORD
 

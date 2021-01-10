@@ -5,58 +5,49 @@ const config 		= 	require('../../config.json');
 
 // If modifying these scopes, delete token.json.
 const SCOPES = [ 'https://www.googleapis.com/auth/spreadsheets' ];
+const CREDENTIALS = 'credentials.json';
 const TOKEN_PATH = 'token.json';
 
-class APICall {
-	constructor(range, cb) {
-		this.range = range;
-		this.cb = cb;
+const test = (data) => data ? console.log('API ready') : console.log('there\'s a problem with the api');
 
-		this.request = this.request.bind(this);
-	}
+/* how to use:
+sheetsapi.getData('range', (data) => {
+	// do something
+});
+*/
 
-	request(auth) {
+module.exports.getData = (range='A1:B2', cb=test) => {
+	let request = (auth) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get(
 			{
 				spreadsheetId: config.sheets_id,
-				range: this.range
-			},
-			this.cb
+				range: range
+			}, (err, res) => {
+				if (err) return console.log('The API returned an error: ' + err);
+				var rows = res.data.values;
+				if (rows.length) {
+					cb(rows);
+				} else {
+					console.log('No data found.');
+				}
+			}
 		);
 	}
-}
-
-const testAPI = new APICall('A1:E5', (err, res) => {
-	if (err) return console.log('The API returned an error: ' + err);
-	console.log('sheets api is ready');
-});
-
-module.exports.authorize = (CRED_PATH, cb=testAPI) => {
-	fs.readFile(CRED_PATH, (err, content) => {
+	
+	fs.readFile(CREDENTIALS, (err, content) => {
 		if (err) return console.log('Error loading client secret file:', err);
 		// Authorize a client with credentials, then call the Google Sheets API.
-		return authorize(JSON.parse(content), cb.request);
-    });
+		authorize(JSON.parse(content), request);
+	});
 }
 
-// Print columns A and E, which correspond to indices 0 and 4.
-// rows[0] = A, rows[4] = E
+// filter function
 
-module.exports.listData = (range) => {
-	return new APICall(range, (err, res) => {
-		if (err) return console.log('The API returned an error: ' + err);
-		var rows = res.data.values;
-		if (rows.length) {
-			rows = rows.map((row) => {
-				return row.map((column) => column.replace('\n', ' '));
-			});
-			console.log(rows);
-			return rows
-		} else {
-			console.log('No data found.');
-		}
-	});
+module.exports.filter = (rows) => {
+	return rows.map(row => row.map(column => {
+		return column.replace('\n', ' ')
+	}));
 }
 
 // DON'T TOUCH IT FFS
@@ -73,7 +64,7 @@ function authorize(credentials, callback) {
 	fs.readFile(TOKEN_PATH, (err, token) => {
 		if (err) return getNewToken(oAuth2Client, callback);
 		oAuth2Client.setCredentials(JSON.parse(token));
-		callback(oAuth2Client);
+		return callback(oAuth2Client);
 	});
 }
 
