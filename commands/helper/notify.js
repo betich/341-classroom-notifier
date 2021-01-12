@@ -34,9 +34,9 @@ const notify = () => {
                 data = sheetsapi.removeBreakTime(data); // filter data
                 let currentPeriod = data[time.getDay()][classIndex]; // current class
                 if (currentPeriod !== '') {
-                    notifyChannel.send(currentPeriod); // send current period
+                    notifyChannel.send(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}\n${currentPeriod}`); // send current period
                 }
-                console.log(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}`)
+                console.log(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}`);
             });
             return setTimeout(notify, 2 * 60 * 1000);
         }
