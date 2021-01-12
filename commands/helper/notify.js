@@ -32,7 +32,7 @@ const notify = () => {
         if (classIndex !== -1) {
             sheetsapi.getData(1, 'A1:L6', (req) => {
                 req.data = sheetsapi.removeBreakTime(req.data); // filter data
-                let currentPeriod = data[time.getDay()][classIndex]; // current class
+                let currentPeriod = req.data[time.getDay()][classIndex]; // current class
 
                 if (currentPeriod !== '') {
 
