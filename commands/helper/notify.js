@@ -17,61 +17,32 @@ const periods = [
     "15:00"
 ];
 
-/*
-return new Promise((resolve, reject) => {
-    if (!spamChannel) reject(`unknown channel, please run ${prefix}setup`);
+const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday"
+]
 
-    spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
-    .then(msg => {
-        setTimeout(() => {
-        process.nextTick(() => {
-            if (spamming) {
-                notify() // recursion
-                .then(resolve) // not entirely necessary, but good practice
-                .catch(error => {
-                    console.log('error while sending message kub');
-                    throw error;
-                }); // log error to console in case one shows up
-            }
-            // otherwise, just resolve promise to end this looping
-            else {
-                resolve();
-            }
-        }) // immediately
-        }, 1 * 5 * 1000) // remove later
-    })
-    .catch(error => {
-        console.log('error kub');
-        throw error;
-    });
-});
-*/
-
-function notify() {
-    if (periods.some(elem => time.isInPeriod(elem))) {
-        const classindex = periods.findIndex(elem =>  elem == elem/*c current time in string */);
-        // get api
-        /*
-        sheetsapi.getData((data) => {
-            console.log(removeBreakTime(data));
-            day = time.getDay();
-    
-            if (data[day][classindex]) {
-                
-                setTimeout(notify, 1 * 60 * 1000);
-            } 
-            else {
-                setTimeout(notify, 1 * 1000);
-            }
+const notify = () => {
+    if (time.getDay() >= 0 && time.getDay() <= 4) {
+        // Find if a period is happening now
+        let classIndex = periods.findIndex((period) => time.isInPeriod(period));
+        if (classIndex !== -1) {
+            sheetsapi.getData('A1:L6', (data) => {
+                data = sheetsapi.removeBreakTime(data); // filter data
+                let currentPeriod = data[time.getDay()][classIndex]; // current class
+                if (currentPeriod !== '') {
+                    notifyChannel.send(currentPeriod); // send current period
+                }
+                console.log(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}`)
+            });
+            return setTimeout(notify, 2 * 60 * 1000);
         }
-    });
-    */
     }
-       else {
-           setTimeout(notify, 1 * 1000);
-       }
 
-        // get day
+    process.nextTick(notify);
 }
 
 // public functions that will be used in your index.js file
@@ -80,5 +51,6 @@ module.exports = {
     setChannel: (channel) => {
         notifyChannel = channel;
     },
-    getChannel: () => notifyChannel
+    getChannel: () => notifyChannel,
+    notify: notify
 }

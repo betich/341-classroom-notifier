@@ -10,10 +10,19 @@ const TOKEN_PATH = 'token.json';
 
 const test = (data) => data ? console.log('API ready') : console.log('there\'s a problem with the api');
 
-/* how to use:
+/* 
+* how to use:
 sheetsapi.getData('range', (data) => {
 	// do something
 });
+
+* get multiple ranges
+sheets.spreadsheets.values.batchGet({
+	spreadsheetId: sheets_id,
+	ranges: ['dkfjwi', 'fkjwkew']
+}, callback)
+
+const rows1 = res.data.valueRanges[0].values;
 */
 
 // filter function
@@ -22,21 +31,6 @@ const filterNewLine = (rows=Array) => {
 		return column.replace('\n', ' ')
 	}));
 }
-
-/*
-module.exports.removeBreakTime = (rows) => {
-	rows.splice(0,1);
-	return rows.map((row) => {
-		row.splice(3,1);
-		row.splice(5,1);
-		row.splice(7,1);
-		row.splice(0,1);
-		return row;
-	});
-}
-*/
-
-module.exports.callAPI = () => {};
 
 module.exports.getData = (range='A1:B2', cb=Function) => {
 	let request = (auth) => {
@@ -71,7 +65,7 @@ module.exports.removeBreakTime = (rows=Array) => {
 		row.splice(5,1);
 		row.splice(7,1);
 		row.splice(0,1);
-		return row;
+		return row
 	})
 }
 

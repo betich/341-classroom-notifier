@@ -6,7 +6,7 @@ yes.
 - [x] Time table
 - [x] Static time table
 - [x] Dynamic time table
-- [ ] Time Table API
+- [x] Time Table API
 - [ ] Auto Notification
 - [ ] Home work
 

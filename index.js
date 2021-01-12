@@ -7,8 +7,6 @@ const sheetsapi		=	require('./commands/helper/sheetsapi');
 const notify 		=	require('./commands/helper/notify');
 const prefix 		=	config.prefix;
 
-sheetsapi.getData();
-
 // DISCORD
 
 const client = new Discord.Client();
@@ -30,6 +28,8 @@ client.once('ready', () => {
 		notify.setChannel(channel);
 		console.log(`set default channel to #${channel.name}`);
 	}
+	
+	notify.notify();
 
 	console.info("ready!");
 });
