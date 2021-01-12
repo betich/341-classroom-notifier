@@ -2,9 +2,9 @@ const fs 			= 	require('fs');
 const Discord 		= 	require('discord.js');
 const config 		= 	require('./config.json');
 const discordToken	= 	require('./discordtoken.json').token;
-const onlineClass 	=	require('./onlineclass/onlineClass');
-const sheetsapi		=	require('./commands/helper/sheetsapi');
-const notify 		=	require('./commands/helper/notify');
+const onlineClass 	=	require('./onlineclass/onlineClass.js');
+const sheetsapi		=	require('./commands/helper/sheetsapi.js');
+const notify 		=	require('./commands/helper/notify.js');
 const prefix 		=	config.prefix;
 
 // DISCORD
