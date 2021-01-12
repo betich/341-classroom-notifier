@@ -1,61 +1,69 @@
-const readline 		=	require('readline');
-const fs 			= 	require('fs');
-const { google } 	=	require('googleapis');
-const config 		= 	require('../../config.json');
+const https = require('https');
 
-// If modifying these scopes, delete token.json.
-const SCOPES = [ 'https://www.googleapis.com/auth/spreadsheets' ];
-const CREDENTIALS = 'credentials.json';
-const TOKEN_PATH = 'token.json';
+module.exports.callAPI = (sheet_number, range='A1:A1', cb=Function) => {
+    const url = `https://spreadsheets.google.com/feeds/cells/1dr00FcWgeZVLsFP_959YtQ6GGNgoPaRUNbaIu7ujY50/${sheet_number}/public/values?alt=json`
+    const req = https.request(url, res => {
+        let data = '';
+        res.on('data', chunk => {
+            data += chunk;
+        })
+        
+        res.on('end', () => {
+            data = JSON.parse(data);
 
-const test = (data) => data ? console.log('API ready') : console.log('there\'s a problem with the api');
+            // start format data
+            [start, end] = range.split(':');
 
-/* 
-* how to use:
-sheetsapi.getData('range', (data) => {
-	// do something
-});
+            [colstart, rowstart] = cellsplit(start);
+            [colend, rowend] = cellsplit(end);
 
-* get multiple ranges
-sheets.spreadsheets.values.batchGet({
-	spreadsheetId: sheets_id,
-	ranges: ['dkfjwi', 'fkjwkew']
-}, callback)
+            colstart = toIndex(colstart);
+            colend = toIndex(colend);
 
-const rows1 = res.data.valueRanges[0].values;
-*/
+            rowend = Number(rowend);
+            rowstart = Number(rowstart);
 
-// filter function
-const filterNewLine = (rows=Array) => {
-	return rows.map(row => row.map(column => {
-		return column.replace('\n', ' ')
-	}));
+            let test = new Array(rowend-rowstart+1);
+            for (let i = 0 ; i < test.length ; i++) {
+                test[i] = new Array(colend-colstart+1);
+            }
+            data.feed.entry.forEach(element => {
+                row = Number(element['gs$cell']['row']);
+                col = Number(element['gs$cell']['col']);
+                if (row >= rowstart && row <= rowend && col >= colstart && col <= colend) {
+                    test[row-rowstart][col-colstart] = element['gs$cell']['$t'];
+                }
+            });
+            // end format data
+            
+            let ret = {};
+            ret.title = data.feed.title['$t'];
+            ret.data = test;
+            cb(ret);
+        })
+
+        req.on('error', e => {
+            throw e;
+        })
+
+    })
+    req.end();
 }
 
-module.exports.getData = (range='A1:B2', cb=Function) => {
-	let request = (auth) => {
-		const sheets = google.sheets({ version: 'v4', auth });
-		sheets.spreadsheets.values.get(
-			{
-				spreadsheetId: config.sheets_id,
-				range: range
-			}, (err, res) => {
-				if (err) return console.log('The API returned an error: ' + err);
-				var rows = filterNewLine(res.data.values);
-				if (rows.length) {
-					cb(rows);
-				} else {
-					console.log('No data found.');
-				}
-			}
-		);
-	}
-	
-	fs.readFile(CREDENTIALS, (err, content) => {
-		if (err) return console.log('Error loading client secret file:', err);
-		// Authorize a client with credentials, then call the Google Sheets API.
-		return authorize(JSON.parse(content), request);
-	});
+cellsplit = (a) => {
+    const pat = /[A-Z,a-z]+/g;
+    const n = pat.exec(a);
+    return [ n[0], a.slice(n[0].length, a.length ) ];
+}
+
+toIndex = (a) => {
+    let x = 0;
+    const array = a.split('');
+    array.forEach(element => {
+        x *= 26;
+        x += (element.charCodeAt(0) - 64);
+    });
+    return x;
 }
 
 module.exports.removeBreakTime = (rows=Array) => {
@@ -67,52 +75,4 @@ module.exports.removeBreakTime = (rows=Array) => {
 		row.splice(0,1);
 		return row
 	})
-}
-
-// DON'T TOUCH IT FFS
-
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- */
-function authorize(credentials, callback) {
-	const { client_secret, client_id, redirect_uris } = credentials.installed;
-	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-
-	// Check if we have previously stored a token.
-	fs.readFile(TOKEN_PATH, (err, token) => {
-		if (err) return getNewToken(oAuth2Client, callback);
-		oAuth2Client.setCredentials(JSON.parse(token));
-		return callback(oAuth2Client);
-	});
-}
-
-/*
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- */
-
-function getNewToken(oAuth2Client, callback) {
-	const authUrl = oAuth2Client.generateAuthUrl({
-		access_type: 'offline',
-		scope: SCOPES
-	});
-	console.log('Authorize this app by visiting this url:', authUrl);
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout
-	});
-	rl.question('Enter the code from that page here: ', (code) => {
-		rl.close();
-		oAuth2Client.getToken(code, (err, token) => {
-			if (err) return console.error('Error while trying to retrieve access token', err);
-			oAuth2Client.setCredentials(token);
-			// Store the token to disk for later program executions
-			fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-				if (err) return console.error(err);
-				console.log('Token stored to', TOKEN_PATH);
-			});
-			callback(oAuth2Client);
-		});
-	});
 }

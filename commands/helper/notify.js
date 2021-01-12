@@ -1,6 +1,6 @@
 const prefix = require('../../config.json').prefix;
-const time = require('./time');
-const onlineClass = require('../../OnlineClass/onlineClass');
+const time = require('./time.js');
+const onlineClass = require('../../onlineclass/onlineClass.js');
 const sheetsapi = require('./sheetsapi.js');
 const { removeBreakTime } = require('./sheetsapi.js');
 
@@ -30,9 +30,10 @@ const notify = () => {
         // Find if a period is happening now
         let classIndex = periods.findIndex((period) => time.isInPeriod(period));
         if (classIndex !== -1) {
-            sheetsapi.getData('A1:L6', (data) => {
-                data = sheetsapi.removeBreakTime(data); // filter data
-                let currentPeriod = data[time.getDay()][classIndex]; // current class
+            sheetsapi.getData(1, 'A1:L6', (req) => {
+                req.data = sheetsapi.removeBreakTime(req.data); // filter data
+                let currentPeriod = req.data[time.getDay()][classIndex]; // current class
+
                 if (currentPeriod !== '') {
                     notifyChannel.send(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}\n${currentPeriod}`); // send current period
                 }
