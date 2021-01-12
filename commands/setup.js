@@ -15,7 +15,7 @@ module.exports = {
                 if (err) throw err;
                 fs.writeFile(cfgPath, JSON.stringify({...JSON.parse(data), default_channel: msg.channel.id}, null, 4), (err) => {
                     if (err) throw err;
-                    console.log(`changed defualt channel to ${msg.channel.name}`);
+                    console.log(`changed default channel to ${msg.channel.name}`);
                 });
             });
         } else {

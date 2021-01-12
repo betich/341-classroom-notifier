@@ -1,69 +1,84 @@
 const prefix = require('../../config.json').prefix;
 const time = require('./time');
-let spamming = false;
-let spamChannel = require('../../config.json').default_channel || undefined;
+const onlineClass = require('../../OnlineClass/onlineClass');
+const sheetsapi = require('./sheetsapi.js');
+const { removeBreakTime } = require('./sheetsapi.js');
 
-const periods = {
-    "c1": "07:50",
-    "c2": "08:40",
-    "c3": "09:40",
-    "c4": "10:30",
-    "c5": "12:20",
-    "c6": "13:10",
-    "c7": "14:10",
-    "c8": "15:00"
-};
+let notifyChannel = undefined;
+
+const periods = [
+    "07:50",
+    "08:40",
+    "09:40",
+    "10:30",
+    "12:20",
+    "13:10",
+    "14:10",
+    "15:00"
+];
+
+/*
+return new Promise((resolve, reject) => {
+    if (!spamChannel) reject(`unknown channel, please run ${prefix}setup`);
+
+    spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
+    .then(msg => {
+        setTimeout(() => {
+        process.nextTick(() => {
+            if (spamming) {
+                notify() // recursion
+                .then(resolve) // not entirely necessary, but good practice
+                .catch(error => {
+                    console.log('error while sending message kub');
+                    throw error;
+                }); // log error to console in case one shows up
+            }
+            // otherwise, just resolve promise to end this looping
+            else {
+                resolve();
+            }
+        }) // immediately
+        }, 1 * 5 * 1000) // remove later
+    })
+    .catch(error => {
+        console.log('error kub');
+        throw error;
+    });
+});
+*/
 
 function notify() {
-    return new Promise((resolve, reject) => {
-        if (!spamChannel) reject(`unknown channel, please run ${prefix}setup`);
-
-        spamChannel.send(time.isInRange(periods.c1, time.changeMinutes(periods.c1, 10)))
-        .then(msg => {
-            setTimeout(() => {
-            process.nextTick(() => {
-                if (spamming) {
-                    notify() // recursion
-                    .then(resolve) // not entirely necessary, but good practice
-                    .catch(error => {
-                        console.log('error while sending message kub');
-                        throw error;
-                    }); // log error to console in case one shows up
-                }
-                // otherwise, just resolve promise to end this looping
-                else {
-                    resolve();
-                }
-            }) // immediately
-            }, 1 * 5 * 1000) // remove later
-        })
-        .catch(error => {
-            console.log('error kub');
-            throw error;
-        });
+    if (periods.some(elem => time.isInPeriod(elem))) {
+        const classindex = periods.findIndex(elem =>  elem == elem/*c current time in string */);
+        // get api
+        /*
+        sheetsapi.getData((data) => {
+            console.log(removeBreakTime(data));
+            day = time.getDay();
+    
+            if (data[day][classindex]) {
+                
+                setTimeout(notify, 1 * 60 * 1000);
+            } 
+            else {
+                setTimeout(notify, 1 * 1000);
+            }
+        }
     });
+    */
+    }
+       else {
+           setTimeout(notify, 1 * 1000);
+       }
+
+        // get day
 }
 
 // public functions that will be used in your index.js file
 module.exports = {
     // pass in discord.js channel for spam function
     setChannel: (channel) => {
-        spamChannel = channel;
+        notifyChannel = channel;
     },
-
-    // set spam status (true = start spamming, false = stop spamming)
-    setStatus: (spamStatus) => {
-        // get current status
-        let currentStatus = spamming;
-
-        // update spamming flag
-        spamming = spamStatus;
-        // if spamming should start, and it hasn't started already, call spam()
-        if (spamStatus && currentStatus != spamStatus) {
-            notify();
-        }            
-    },
-
-    getStatus: () => spamming,
-    getChannel: () => spamChannel
-};
+    getChannel: () => notifyChannel
+}

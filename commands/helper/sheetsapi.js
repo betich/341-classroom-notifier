@@ -16,7 +16,29 @@ sheetsapi.getData('range', (data) => {
 });
 */
 
-module.exports.getData = (range='A1:B2', cb=test) => {
+// filter function
+const filterNewLine = (rows=Array) => {
+	return rows.map(row => row.map(column => {
+		return column.replace('\n', ' ')
+	}));
+}
+
+/*
+module.exports.removeBreakTime = (rows) => {
+	rows.splice(0,1);
+	return rows.map((row) => {
+		row.splice(3,1);
+		row.splice(5,1);
+		row.splice(7,1);
+		row.splice(0,1);
+		return row;
+	});
+}
+*/
+
+module.exports.callAPI = () => {};
+
+module.exports.getData = (range='A1:B2', cb=Function) => {
 	let request = (auth) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get(
@@ -25,7 +47,7 @@ module.exports.getData = (range='A1:B2', cb=test) => {
 				range: range
 			}, (err, res) => {
 				if (err) return console.log('The API returned an error: ' + err);
-				var rows = res.data.values;
+				var rows = filterNewLine(res.data.values);
 				if (rows.length) {
 					cb(rows);
 				} else {
@@ -38,16 +60,19 @@ module.exports.getData = (range='A1:B2', cb=test) => {
 	fs.readFile(CREDENTIALS, (err, content) => {
 		if (err) return console.log('Error loading client secret file:', err);
 		// Authorize a client with credentials, then call the Google Sheets API.
-		authorize(JSON.parse(content), request);
+		return authorize(JSON.parse(content), request);
 	});
 }
 
-// filter function
-
-module.exports.filter = (rows) => {
-	return rows.map(row => row.map(column => {
-		return column.replace('\n', ' ')
-	}));
+module.exports.removeBreakTime = (rows=Array) => {
+	rows.splice(0,1);
+	return rows.map((row) => {
+		row.splice(3,1);
+		row.splice(5,1);
+		row.splice(7,1);
+		row.splice(0,1);
+		return row;
+	})
 }
 
 // DON'T TOUCH IT FFS

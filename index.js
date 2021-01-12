@@ -2,11 +2,12 @@ const fs 			= 	require('fs');
 const Discord 		= 	require('discord.js');
 const config 		= 	require('./config.json');
 const discordToken	= 	require('./discordtoken.json').token;
-const onlineClass 	=	require('./onlineclass/onlineClass.js');
+const onlineClass 	=	require('./onlineclass/onlineClass');
 const sheetsapi		=	require('./commands/helper/sheetsapi');
+const notify 		=	require('./commands/helper/notify');
 const prefix 		=	config.prefix;
 
-sheetsapi.getData(); // test api
+sheetsapi.getData();
 
 // DISCORD
 
@@ -18,23 +19,19 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 commandFiles.forEach(file => {
 	let command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
-    console.log(`loaded ${command.name}`);
+	console.log(`loaded ${command.name}`);
 });
 
 client.once('ready', () => {
 	client.user.setActivity('Pisanu', { type: 'LISTENING'});
-	client.channels.fetch(config.default_channel)
-	.then (chan => {
-		//
-		// SetInterval for auto
-		//
+	
+	if (config.default_channel) {
+		const channel = client.channels.cache.get(config.default_channel);
+		notify.setChannel(channel);
+		console.log(`set default channel to #${channel.name}`);
+	}
 
-	})
-	.catch (error => {
-		console.error('Error binding')
-		console.error(error);
-	})
-	console.log('Ready!');
+	console.info("ready!");
 });
 
 client.on('message', message => {
