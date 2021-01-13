@@ -43,7 +43,7 @@ class OnlineClass {
         const embed = new Discord.MessageEmbed()
             .setColor('#fcfc03') //Yellow
             .setTitle('Online Classroom')
-            .setAuthor(this.subject)
+            .setAuthor(this.teacher)
             .attachFiles(attachment)
             .setImage(`attachment://${thumbnailPath}`)
             .addFields(

@@ -1,6 +1,5 @@
 const notify = require('./helper/notify.js');
 const fs = require('fs');
-const { Message } = require('discord.js');
 const cfgPath = './config.json';
 
 module.exports = {

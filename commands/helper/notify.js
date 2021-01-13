@@ -5,7 +5,7 @@ const sheetsapi = require('./sheetsapi.js');
 let notifyChannel = undefined;
 
 const periods = [
-    "07:57",
+    "07:50",
     "08:40",
     "09:40",
     "10:30",
@@ -23,11 +23,12 @@ const days = [
     "Friday"
 ]
 
-const notify = () => {
+const notify = async () => {
     if (time.getDay() >= 0 && time.getDay() <= 4) {
         // Find if a period is happening now
         let classIndex = periods.findIndex((period) => time.isInPeriod(period));
         if (classIndex !== -1) {
+            console.log(`${periods[classIndex]}, class ${classIndex+1} of ${days[time.getDay()]}`);
             sheetsapi.callAPI(1, 'A1:L6', (req) => {
                 req.data = sheetsapi.removeBreakTime(req.data); // filter data
                 let currentPeriod = req.data[time.getDay()][classIndex]; // current class
@@ -36,9 +37,7 @@ const notify = () => {
                     Embed(periods[classIndex], currentPeriod);
                 }
             });
-            setTimeout(() => {
-                console.log(`${periods[classIndex]}, class ${classIndex} of ${days[time.getDay()]}`);
-            }, 2 * 60 * 1000); // 2 second timeout;
+            await new Promise((resolve, reject) => setTimeout(resolve, 2 * 60 * 1000)); // 2 minute timeout
         }
     }
 }
