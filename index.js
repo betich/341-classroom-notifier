@@ -1,13 +1,9 @@
 const fs 			= 	require('fs');
 const Discord 		= 	require('discord.js');
 const config 		= 	require('./config.json');
-const discordToken	= 	require('./discordtoken.json').token;
-const onlineClass 	=	require('./onlineclass/onlineClass.js');
-const sheetsapi		=	require('./commands/helper/sheetsapi.js');
+const token			= 	require('./token.json').token;
 const notify 		=	require('./commands/helper/notify.js');
 const prefix 		=	config.prefix;
-
-// DISCORD
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -29,12 +25,12 @@ client.once('ready', () => {
 		console.log(`set default channel to #${channel.name}`);
 	}
 	
-	notify.notify();
+	process.nextTick(notify.notify);
 
 	console.info("ready!");
 });
 
-client.on('message', message => {
+client.on('message', (message) => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -52,7 +48,7 @@ client.on('message', message => {
 });
 
 try {
-    client.login(discordToken);
+	client.login(token);
 } catch (error) {
 	console.error('Can\'t login with this token / token missing');
     throw error;

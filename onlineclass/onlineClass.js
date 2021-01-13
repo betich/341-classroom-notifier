@@ -1,51 +1,64 @@
-const Discord = require('discord.js');
+const Discord       =   require('discord.js');
+const fs 			= 	require('fs');
 
-const thumbnails = ['https://img.pokemondb.net/artwork/large/mudkip.jpg','https://img.pokemondb.net/artwork/large/turtwig.jpg','https://img.pokemondb.net/artwork/large/oshawott.jpg']
+function getThumbnails(dir_path) {
+    let thumbnails = [];
+    fs.readdirSync(dir_path).forEach(file => {
+        thumbnails.push(file);
+    });
+    return thumbnails
+}
 
-class onlineClass {
-    constructor ({index, startTime, endTime, subject, teacher, meeting}) {
-        this.index = index;
+function findById(id, paths) {
+    let pathIdx = paths.findIndex((path) => {
+        return id === (path.substr(0, path.lastIndexOf('.')) || path) // remove file extension
+    });
+    if (pathIdx !== -1) return paths[pathIdx]
+    else return 'default.jpg'
+}
+
+const thumbnails = getThumbnails('./thumbnails');
+
+class OnlineClass {
+    constructor (startTime, endTime, subject, teacher, meeting=Object, note, classId) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.subject = subject;
         this.teacher = teacher;
-        this.meeting = meeting; 
-        /*   Example
-        meeting1 = {
-            "type": "link",
-            "value": "zoom.us/fdofjkdofd"
-        }
-        meeting2 = {
-            "type": "id"
-            "value": {
-                "site": "zoom.us"
-                "id": "123456",
-                "password": "78910"
-            }
-        }*/
+        this.meeting = meeting;
+        this.note = note;
+        this.classId = classId;
+        
+        this.sendEmbed = this.sendEmbed.bind(this);
     }
 
     get detail () {
-        return `Index: ${this.index}\nStart ${this.startTime}\nEnd ${this.endTime}\nSubject: ${this.subject}\nTeacher: ${this.teacher}\n$Meeting: ${JSON.stringify(meeting)}`;
+        return `Start ${this.startTime}\nEnd ${this.endTime}\nSubject: ${this.subject}\nTeacher: ${this.teacher}\n$Meeting: ${JSON.stringify(meeting)}`;
     }
 
     sendEmbed (channel) {
+        findById(this.classId, thumbnails)
+        const thumbnailPath = findById(this.classId, thumbnails);
+        const attachment = new Discord.MessageAttachment(`./thumbnails/${thumbnailPath}`, thumbnailPath);
         const embed = new Discord.MessageEmbed()
             .setColor('#fcfc03') //Yellow
             .setTitle('Online Classroom')
-            .setAuthor(this.teacher)
-            .setThumbnail(thumbnails[Math.floor(Math.random() * thumbnails.length)])
+            .setAuthor(this.subject)
+            .attachFiles(attachment)
+            .setImage(`attachment://${thumbnailPath}`)
             .addFields(
                 {name: 'Class', value: this.subject},
                 {name: 'Time', value: `${this.startTime} - ${this.endTime}`},
-                {name: 'ID', value: this.meeting.type === 'link' ? '-' : this.meeting.value.id, inline: true},
+                {name: 'ID', value: this.meeting.id, inline: true},
+                {name: 'Passcode', value: this.meeting.password, inline: true},
+                {name: 'Note', value: this.note}
             )
-            .addField('Passcode', this.meeting.type === 'link' ? '-' : this.meeting.value.password, true)
             .setTimestamp()
-            .setURL(this.meeting.type == 'link' ? this.meeting.value : this.meeting.value.site);
+            .setURL(this.meeting.site);
 
-        channel.send(embed);
+        channel.send({embed});
+        channel.send("@here");
     }
 };
 
-module.exports = onlineClass;
+module.exports.OnlineClass = OnlineClass;
