@@ -1,6 +1,8 @@
 # Token file
 token.json
 
+start.bat
+
 # Logs
 logs
 *.log

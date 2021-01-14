@@ -1,17 +1,16 @@
-const notify = require('./helper/notify.js');
 const time = require('./helper/time.js')
 const sheetsapi = require('./helper/sheetsapi.js');
 const { OnlineClass } = require('../onlineclass/onlineClass.js');
 
 const periods = [
-    ["07:50","08:40"],
-    ["08:40","09:30"],
-    ["09:40","10:30"],
-    ["10:30","11:20"],
-    ["12:20","13:10"],
-    ["13:10","14:00"],
-    ["14:10","15:00"],
-    ["15:00","15:50"]
+    "07:50",
+    "08:40",
+    "09:40",
+    "10:30",
+    "12:20",
+    "13:10",
+    "14:10",
+    "15:00"
 ];
 
 module.exports = {
@@ -21,17 +20,17 @@ module.exports = {
 	uses: 'currentclass',
 	execute(msg) {
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
-            const classIndex = periods.findIndex(elem => time.isInRange(elem[0],elem[1]));
+            const classIndex = periods.findIndex(elem => time.isInRange(elem, time.changeMinutes(elem, 50)));
             if ( classIndex === -1) {
-                msg.channel.send('No class now');
+                msg.reply('There are no classes today');
             } else {
                 sheetsapi.callAPI(1, 'A1:L6', (req) => {
                     req.removeBreakTime(); // filter data
                     const currentclass = req.data[time.getDay()][classIndex] // all classes today
                     if (currentclass) {
-                        Embed(periods[classIndex][0], currentclass, msg.channel);
+                        Embed(periods[classIndex], currentclass, msg.channel);
                     } else {
-                        return msg.reply('There are no classes today.')
+                        return msg.reply('There are no classes now')
                     }
                 });
             }

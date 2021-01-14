@@ -23,7 +23,7 @@ const days = [
     "Friday"
 ];
 
-const notify = async () => {
+const notify = () => {
     if (time.getDay() >= 0 && time.getDay() <= 4) {
         // Find if a period is happening now
         let classIndex = periods.findIndex((period) => time.isInPeriod(period));
@@ -35,9 +35,8 @@ const notify = async () => {
                 
                 if (currentPeriod !== '') {
                     Embed(periods[classIndex], currentPeriod);
-                }c
+                }
             });
-            await new Promise((resolve, reject) => setTimeout(resolve, 2 * 60 * 1000)); // 2 minute timeout
         }
     }
 }
