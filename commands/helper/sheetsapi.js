@@ -40,6 +40,8 @@ module.exports.callAPI = (sheet_number, range='A1:A1', cb=Function) => {
             let ret = {};
             ret.title = data.feed.title['$t'];
             ret.data = filterNewLine(output);
+            ret.removeBreakTime = removeBreakTime;
+            ret.arrayToObject = arrayToObject;
             cb(ret);
         })
 
@@ -73,9 +75,9 @@ const toIndex = (a) => {
     return x;
 }
 
-module.exports.removeBreakTime = (rows=Array) => {
-	rows.splice(0,1);
-	return rows.map((row) => {
+removeBreakTime = function () {
+	this.data.splice(0,1);
+	this.data = this.data.map((row) => {
 		row.splice(3,1);
 		row.splice(5,1);
 		row.splice(7,1);
@@ -84,8 +86,8 @@ module.exports.removeBreakTime = (rows=Array) => {
 	})
 }
 
-module.exports.arrayToObject = (arr=Array) => {
-    return arr.map((info) => {
+arrayToObject = function () {
+    this.data = this.data.map((info) => {
         return {
             "subject": info[0],
             "teacher": info[1],

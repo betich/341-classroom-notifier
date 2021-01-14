@@ -11,7 +11,7 @@ module.exports = {
 	execute(msg) {
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
 			sheetsapi.callAPI(1, 'A1:L6', (req) => {
-				req.data = sheetsapi.removeBreakTime(req.data); // filter data
+				req.removeBreakTime(); // filter data
 				let classes = req.data[time.getDay()] // all classes today
 				classes.filter((data) => data != null);
 

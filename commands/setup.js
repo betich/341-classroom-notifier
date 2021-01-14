@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['setup'],
     uses: 'bind',
 	execute(msg) {
-        if (notify.getChannel() !== msg.channel.id) {
+        if (notify.getChannel().id !== msg.channel.id) {
             notify.setChannel(msg.guild.channels.cache.get(msg.channel.id));
             msg.channel.send(`bound to <#${msg.channel.id}>!`);
             fs.readFile(cfgPath, (err, data) => {

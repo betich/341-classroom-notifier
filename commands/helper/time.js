@@ -23,6 +23,14 @@ module.exports.isInPeriod = (time=String) => {
     return (currentMinutes() >= start) && (currentMinutes() <= end)
 }
 
+module.exports.isInRange = (startTime=String,endTime=String) => {
+    let start = timeToMinutes(startTime);
+    let end = timeToMinutes(endTime);
+    end = (start > end) ? end + timeToMinutes("24:00") : end; // if comparing from a different day, add 24 hours
+
+    return (currentMinutes() >= start) && (currentMinutes() <= end)
+}
+
 module.exports.changeMinutes = (time, d) => {
     let times = time.split(":");
     let format = (num) => num.toString().length  == 1 ? "0" + num.toString() : num.toString()

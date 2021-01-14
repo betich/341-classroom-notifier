@@ -1,12 +1,12 @@
 const time              =   require('./time.js');
-const { OnlineClass }   =   require('../../OnlineClass/OnlineClass.js');
+const { OnlineClass }   =   require('../../onlineclass/onlineClass.js');
 const sheetsapi         =   require('./sheetsapi.js');
 
 let notifyChannel = undefined;
 
 const periods = [
     "07:50",
-    "04:06",
+    "08:40",
     "09:40",
     "10:30",
     "12:20",
@@ -30,12 +30,12 @@ const notify = async () => {
         if (classIndex !== -1) {
             console.log(`${periods[classIndex]}, class ${classIndex+1} of ${days[time.getDay()]}`);
             sheetsapi.callAPI(1, 'A1:L6', (req) => {
-                req.data = sheetsapi.removeBreakTime(req.data); // filter data
+                req.removeBreakTime(); // filter data
                 let currentPeriod = req.data[time.getDay()][classIndex]; // current class
                 
                 if (currentPeriod !== '') {
                     Embed(periods[classIndex], currentPeriod);
-                }
+                }c
             });
             await new Promise((resolve, reject) => setTimeout(resolve, 2 * 60 * 1000)); // 2 minute timeout
         }
@@ -44,9 +44,10 @@ const notify = async () => {
 
 function Embed(startTime, subject) {
     let endTime = time.changeMinutes(startTime, 50);
-    sheetsapi.callAPI(2, 'A2:H20', (res) => {
-        let data = sheetsapi.arrayToObject(res.data)
-
+    sheetsapi.callAPI(2, 'A2:H20', (req) => {
+        req.arrayToObject();
+        data = req.data;
+        console.log(data);
         let subjectData = data[data.findIndex((subData) => subData.subject === subject)];
         let teacher = subjectData.teacher;
         let meeting = {
