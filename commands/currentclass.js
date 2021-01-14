@@ -29,7 +29,7 @@ module.exports = {
                     req.removeBreakTime(); // filter data
                     const currentclass = req.data[time.getDay()][classIndex] // all classes today
                     if (currentclass) {
-                        Embed(periods[classIndex][0], currentclass);
+                        Embed(periods[classIndex][0], currentclass, msg.channel);
                     } else {
                         return msg.reply('There are no classes today.')
                     }
@@ -41,7 +41,7 @@ module.exports = {
 	}
 };
 
-function Embed(startTime, subject) {
+function Embed(startTime, subject, channel) {
     let endTime = time.changeMinutes(startTime, 50);
     sheetsapi.callAPI(2, 'A2:H20', (req) => {
         req.arrayToObject();
@@ -58,6 +58,6 @@ function Embed(startTime, subject) {
         let note = subjectData.note;
     
         let newEmbed = new OnlineClass(startTime, endTime, subject, teacher, meeting, note, classId);
-        newEmbed.sendEmbed(notify.getChannel());
+        newEmbed.sendEmbed(channel);
     });
 }

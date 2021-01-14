@@ -20,9 +20,14 @@ client.once('ready', () => {
 	client.user.setActivity('Pisanu', { type: 'LISTENING'});
 	
 	if (config.default_channel) {
-		const channel = client.channels.cache.get(config.default_channel);
-		notify.setChannel(channel);
-		console.log(`set default channel to #${channel.name}`);
+		try {
+			const channel = client.channels.cache.get(config.default_channel);
+			notify.setChannel(channel);
+			console.log(`set default channel to #${channel.name}`);
+		} catch (e) {
+			console.log('Warning: can\'t set notify channels');
+			console.log(`try ${prefix}setup on some channel`);
+		}
 	}
 	
 	process.nextTick(notify.notify);

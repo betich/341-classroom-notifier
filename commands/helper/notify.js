@@ -69,6 +69,6 @@ module.exports = {
     setChannel: (channel) => {
         notifyChannel = channel;
     },
-    getChannel: () => notifyChannel,
+    getChannel: () => notifyChannel || undefined,
     notify: notify
 }
