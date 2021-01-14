@@ -12,24 +12,27 @@ module.exports = {
 		const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
 		
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
-			sheetsapi.callAPI(1, 'A1:L6', (req) => {
-				req.removeBreakTime(); // filter data
-				let classes = req.data[time.getDay()] // all classes today
-				classes.filter((data) => data != null);
-
-				if (classes) {
-					var Embed = new Discord.MessageEmbed()
-						.setColor(config.embed_color) //Yellow
-						.setTitle(`Today\'s Classes`)
-						.setDescription(classes.join('\n'))
-	
-					return channel.send(Embed)
-				} else {
-					return channel.send('There are no classes today.')
-				}
-			});
+			exec(channel);
 		} else {
 			return channel.send('There are no classes today.');
 		}
 	}
 };
+
+async function exec(channel) {
+	req = await sheetsapi.callAPI(1, 'A1:L6');
+	req.removeBreakTime(); // filter data
+	let classes = req.body[time.getDay()] // all classes today
+	classes.filter((data) => data != null);
+
+	if (classes) {
+		var Embed = new Discord.MessageEmbed()
+			.setColor(config.embed_color) //Yellow
+			.setTitle(`Today\'s Classes`)
+			.setDescription(classes.join('\n'))
+
+		return channel.send(Embed)
+	} else {
+		return channel.send('There are no classes today.')
+	}
+}

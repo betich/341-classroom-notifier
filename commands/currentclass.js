@@ -27,15 +27,8 @@ module.exports = {
             if ( classIndex === -1) {
                 return channel.send('There are no classes now');
             } else {
-                sheetsapi.callAPI(1, 'A1:L6', (req) => {
-                    req.removeBreakTime(); // filter data
-                    const currentclass = req.data[time.getDay()][classIndex] // all classes today
-                    if (currentclass) {
-                        Embed(periods[classIndex], currentclass, channel);
-                    } else {
-                        return channel.send('There are no classes now')
-                    }
-                });
+                // async the api call
+                exec(channel, classIndex);
             }
 		} else {
 			return channel.send('There are no classes today.');
@@ -43,23 +36,33 @@ module.exports = {
 	}
 };
 
-function Embed(startTime, subject, channel) {
+async function Embed(startTime, subject, channel) {
     let endTime = time.changeMinutes(startTime, 50);
-    sheetsapi.callAPI(2, 'A2:H20', (req) => {
-        req.arrayToObject();
-        const data = req.data;
+    req = await sheetsapi.callAPI(2, 'A2:H20');
+    req.arrayToObject();
+    const data = req.body;
 
-        let subjectData = data[data.findIndex((subData) => subData.subject === subject)];
-        let teacher = subjectData.teacher;
-        let meeting = {
-            "site": subjectData.link,
-            "id": subjectData.username,
-            "password": subjectData.password
-        }
-        let classId = subjectData.id;
-        let note = subjectData.note;
-    
-        let newEmbed = new OnlineClass(startTime, endTime, subject, teacher, meeting, note, classId);
-        newEmbed.sendEmbed(channel);
-    });
+    let subjectData = data[data.findIndex((subData) => subData.subject === subject)];
+    let teacher = subjectData.teacher;
+    let meeting = {
+        "site": subjectData.link,
+        "id": subjectData.username,
+        "password": subjectData.password
+    }
+    let classId = subjectData.id;
+    let note = subjectData.note;
+
+    let newEmbed = new OnlineClass(startTime, endTime, subject, teacher, meeting, note, classId);
+    newEmbed.sendEmbed(channel);
+}
+
+async function exec (channel, classIndex) {
+    req = await sheetsapi.callAPI(1, 'A1:L6');
+    req.removeBreakTime(); // filter data
+    const currentclass = req.body[time.getDay()][classIndex] // all classes today
+    if (currentclass) {
+        await Embed(periods[classIndex], currentclass, channel);
+    } else {
+        return channel.send('There are no classes now')
+    }
 }

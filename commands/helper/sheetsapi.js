@@ -1,56 +1,41 @@
-const https = require('https');
-const config = require('../../config.json');
+const fetch = require('node-fetch');
 
-module.exports.callAPI = (sheet_number, range='A1:A1', cb=Function) => {
-    const url = `https://spreadsheets.google.com/feeds/cells/${config.sheets_id}/${sheet_number}/public/values?alt=json`
-    const req = https.request(url, res => {
-        let data = '';
-        res.on('data', chunk => {
-            data += chunk;
-        })
-        
-        res.on('end', () => {
-            data = JSON.parse(data);
-
-            // start format data
-            [start, end] = range.split(':');
-
-            [colstart, rowstart] = cellsplit(start);
-            [colend, rowend] = cellsplit(end);
-
-            colstart = toIndex(colstart);
-            colend = toIndex(colend);
-
-            rowend = Number(rowend);
-            rowstart = Number(rowstart);
-
-            let output = new Array(rowend-rowstart+1);
-            for (let i = 0 ; i < output.length ; i++) {
-                output[i] = new Array(colend-colstart+1);
-            }
-            data.feed.entry.forEach(element => {
-                row = Number(element['gs$cell']['row']);
-                col = Number(element['gs$cell']['col']);
-                if (row >= rowstart && row <= rowend && col >= colstart && col <= colend) {
-                    output[row-rowstart][col-colstart] = element['gs$cell']['$t'];
-                }
-            });
-            // end format data
-            
-            let ret = {};
-            ret.title = data.feed.title['$t'];
-            ret.data = filterNewLine(output);
-            ret.removeBreakTime = removeBreakTime;
-            ret.arrayToObject = arrayToObject;
-            cb(ret);
-        })
-
-        req.on('error', e => {
-            throw e;
-        })
-
-    })
-    req.end();
+async function callAPI (sheet_number, range) {
+    const raw_data = await fetch(`https://spreadsheets.google.com/feeds/cells/1dr00FcWgeZVLsFP_959YtQ6GGNgoPaRUNbaIu7ujY50/${sheet_number}/public/values?alt=json`);
+    body = await raw_data.text();
+    body = JSON.parse(body);
+    
+    // start format data
+    [start, end] = range.split(':');
+    
+    [colstart, rowstart] = cellsplit(start);
+    [colend, rowend] = cellsplit(end);
+    
+    colstart = toIndex(colstart);
+    colend = toIndex(colend);
+    
+    rowend = Number(rowend);
+    rowstart = Number(rowstart);
+    
+    let output = new Array(rowend-rowstart+1);
+    for (let i = 0 ; i < output.length ; i++) {
+        output[i] = new Array(colend-colstart+1);
+    }
+    body.feed.entry.forEach(element => {
+        row = Number(element['gs$cell']['row']);
+        col = Number(element['gs$cell']['col']);
+        if (row >= rowstart && row <= rowend && col >= colstart && col <= colend) {
+            output[row-rowstart][col-colstart] = element['gs$cell']['$t'];
+        }
+    });
+    // end format data
+    
+    let ret = {};
+    ret.title = body.feed.title['$t'];
+    ret.body = filterNewLine(output);
+    ret.removeBreakTime = removeBreakTime;
+    ret.arrayToObject = arrayToObject;
+    return ret;
 }
 
 const cellsplit = (a) => {
@@ -76,9 +61,9 @@ const toIndex = (a) => {
 }
 
 removeBreakTime = function () {
-	this.data.splice(0,1);
-	this.data = this.data.map((row) => {
-		row.splice(3,1);
+    this.body.splice(0,1);
+	this.body = this.body.map((row) => {
+        row.splice(3,1);
 		row.splice(5,1);
 		row.splice(7,1);
 		row.splice(0,1);
@@ -87,7 +72,7 @@ removeBreakTime = function () {
 }
 
 arrayToObject = function () {
-    this.data = this.data.map((info) => {
+    this.body = this.body.map((info) => {
         return {
             "subject": info[0],
             "teacher": info[1],
@@ -100,3 +85,5 @@ arrayToObject = function () {
         }
     })
 }
+
+module.exports.callAPI = callAPI;
