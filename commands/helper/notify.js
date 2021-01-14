@@ -1,12 +1,12 @@
-const time = require('./time.js');
-const { OnlineClass } = require('../../OnlineClass/OnlineClass.js');
-const sheetsapi = require('./sheetsapi.js');
+const time              =   require('./time.js');
+const { OnlineClass }   =   require('../../OnlineClass/OnlineClass.js');
+const sheetsapi         =   require('./sheetsapi.js');
 
 let notifyChannel = undefined;
 
 const periods = [
     "07:50",
-    "08:40",
+    "04:06",
     "09:40",
     "10:30",
     "12:20",
@@ -21,7 +21,7 @@ const days = [
     "Wednesday",
     "Thursday",
     "Friday"
-]
+];
 
 const notify = async () => {
     if (time.getDay() >= 0 && time.getDay() <= 4) {
@@ -60,7 +60,6 @@ function Embed(startTime, subject) {
         let newEmbed = new OnlineClass(startTime, endTime, subject, teacher, meeting, note, classId);
         newEmbed.sendEmbed(notifyChannel);
     });
-    
 }
 
 // public functions that will be used in your index.js file

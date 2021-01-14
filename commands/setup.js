@@ -3,9 +3,10 @@ const fs = require('fs');
 const cfgPath = './config.json';
 
 module.exports = {
-	name: 'setup',
-    description: 'set bot up in a channel',
-    aliases: ['bind'],
+	name: 'bind',
+    description: 'Set bot up in a channel',
+    aliases: ['setup'],
+    uses: 'bind',
 	execute(msg) {
         if (notify.getChannel() !== msg.channel.id) {
             notify.setChannel(msg.guild.channels.cache.get(msg.channel.id));

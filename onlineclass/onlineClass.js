@@ -1,5 +1,6 @@
 const Discord       =   require('discord.js');
 const fs 			= 	require('fs');
+const config        =   require('../config.json');
 
 function getThumbnails(dir_path) {
     let thumbnails = [];
@@ -41,7 +42,7 @@ class OnlineClass {
         const thumbnailPath = findById(this.classId, thumbnails);
         const attachment = new Discord.MessageAttachment(`./thumbnails/${thumbnailPath}`, thumbnailPath);
         const embed = new Discord.MessageEmbed()
-            .setColor('#fcfc03') //Yellow
+            .setColor(config.embed_color) //Yellow
             .setTitle('Online Classroom')
             .setAuthor(this.teacher)
             .attachFiles(attachment)
