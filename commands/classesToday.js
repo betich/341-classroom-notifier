@@ -7,8 +7,10 @@ module.exports = {
 	name: 'classestoday',
 	aliases: ['listclasses', 'today'],
 	description: 'List all classes today',
-	uses: 'classestoday',
-	execute(msg) {
+	uses: 'classestoday [all,a]',
+	execute(msg,args) {
+		const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
+		
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
 			sheetsapi.callAPI(1, 'A1:L6', (req) => {
 				req.removeBreakTime(); // filter data
@@ -21,13 +23,13 @@ module.exports = {
 						.setTitle(`Today\'s Classes`)
 						.setDescription(classes.join('\n'))
 	
-					return msg.channel.send(Embed)
+					return channel.send(Embed)
 				} else {
-					return msg.reply('There are no classes today.')
+					return channel.send('There are no classes today.')
 				}
 			});
 		} else {
-			return msg.reply('There are no classes today.');
+			return channel.send('There are no classes today.');
 		}
 	}
 };

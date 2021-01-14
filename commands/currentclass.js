@@ -17,25 +17,28 @@ module.exports = {
 	name: 'currentclass',
 	aliases: ['now', 'current'],
 	description: 'List this class',
-	uses: 'currentclass',
-	execute(msg) {
+    uses: 'currentclass [all,a]',
+	execute(msg, args) {
+        const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
+
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
             const classIndex = periods.findIndex(elem => time.isInRange(elem, time.changeMinutes(elem, 50)));
+
             if ( classIndex === -1) {
-                msg.reply('There are no classes today');
+                return channel.send('There are no classes now');
             } else {
                 sheetsapi.callAPI(1, 'A1:L6', (req) => {
                     req.removeBreakTime(); // filter data
                     const currentclass = req.data[time.getDay()][classIndex] // all classes today
                     if (currentclass) {
-                        Embed(periods[classIndex], currentclass, msg.channel);
+                        Embed(periods[classIndex], currentclass, channel);
                     } else {
-                        return msg.reply('There are no classes now')
+                        return channel.send('There are no classes now')
                     }
                 });
             }
 		} else {
-			return msg.reply('There are no classes today.');
+			return channel.send('There are no classes today.');
 		}
 	}
 };

@@ -48,17 +48,18 @@ class OnlineClass {
             .attachFiles(attachment)
             .setImage(`attachment://${thumbnailPath}`)
             .addFields(
-                {name: 'Class', value: this.subject},
-                {name: 'Time', value: `${this.startTime} - ${this.endTime}`},
+                {name: 'Class', value: this.subject, inline: true},
+                {name: 'Time', value: `${this.startTime} - ${this.endTime}`, inline: true},
+                {name: 'Meeting Link', value: `${this.meeting.site}`}
+            ).addFields(
                 {name: 'ID', value: this.meeting.id, inline: true},
                 {name: 'Passcode', value: this.meeting.password, inline: true},
                 {name: 'Note', value: this.note}
             )
             .setTimestamp()
             .setURL(this.meeting.site);
-
+        
         channel.send({embed});
-        channel.send("@here");
     }
 };
 
