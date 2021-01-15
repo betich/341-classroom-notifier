@@ -16,11 +16,7 @@ module.exports.getDay = () => {
 }
 
 module.exports.isInPeriod = (time=String) => {
-    let start = timeToMinutes(time) - 1; // 1 min failsafe
-    let end = timeToMinutes(time);
-    end = (start > end) ? end + timeToMinutes("24:00") : end; // if comparing from a different day, add 24 hours
-
-    return (currentMinutes() >= start) && (currentMinutes() <= end)
+    return currentMinutes() === timeToMinutes(time)
 }
 
 module.exports.isInRange = (startTime=String, endTime=String) => {

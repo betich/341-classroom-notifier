@@ -3,6 +3,17 @@ const time			=	require('./helper/time.js');
 const Discord       =   require('discord.js');
 const config		=	require('../config.json');
 
+const periods = [
+    "07:50",
+    "08:40",
+    "09:40",
+    "10:30",
+    "12:20",
+    "13:10",
+    "14:10",
+    "15:00"
+];
+
 module.exports = {
 	name: 'classestoday',
 	aliases: ['listclasses', 'today'],
@@ -10,6 +21,7 @@ module.exports = {
 	uses: 'classestoday [all,a]',
 	execute(msg,args) {
 		const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
+		if (channel === msg.author) msg.react('772162743821664276' || '🤩');
 		
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
 			exec(channel);
@@ -20,16 +32,24 @@ module.exports = {
 };
 
 async function exec(channel) {
-	req = await sheetsapi.callAPI(1, 'A1:L6');
-	req.removeBreakTime(); // filter data
-	let classes = req.body[time.getDay()] // all classes today
-	classes.filter((data) => data != null);
+	let req1 = await sheetsapi.callAPI(1, 'A1:L6');
+	req1.removeBreakTime(); // filter data
+	req1 = req1.body[time.getDay()]; // all classes today
+	let classes = [];
+	
+	req1.forEach((subject, idx) => {
+		classes.push({ 'time': periods[idx], 'subject': subject })
+	});
+	
+	classes = classes.filter((data) => data.subject != null);
 
 	if (classes) {
-		var Embed = new Discord.MessageEmbed()
+		let periods = classes.map((cls) => `${cls.time}: ${cls.subject}`);
+
+		const Embed = new Discord.MessageEmbed()
 			.setColor(config.embed_color) //Yellow
 			.setTitle(`Today\'s Classes`)
-			.setDescription(classes.join('\n'))
+			.setDescription(`\`\`\`yaml\n${periods.join('\n')}\`\`\``)
 
 		return channel.send(Embed)
 	} else {

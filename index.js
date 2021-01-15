@@ -30,7 +30,7 @@ client.once('ready', () => {
 		}
 	}
 	
-	process.nextTick(notify.notify);
+	notify.notify();
 
 	console.info("ready!");
 });

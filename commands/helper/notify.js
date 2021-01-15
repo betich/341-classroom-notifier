@@ -4,10 +4,8 @@ const sheetsapi         =   require('./sheetsapi.js');
 
 let notifyChannel = undefined;
 
-var x = 0;
-
 const periods = [
-    "05:40",
+    "07:50",
     "08:40",
     "09:40",
     "10:30",
@@ -35,21 +33,19 @@ const notify = async () => {
             req.removeBreakTime(); // filter data
             let currentPeriod = req.body[time.getDay()][classIndex]; // current class
             
-            if (currentPeriod !== '') {
-                console.log('imhere');
-                await Embed(periods[classIndex], currentPeriod, notifyChannel);
-                return setTimeout(notify, 2 * 60 * 1000);
+            if (currentPeriod !== '' && currentPeriod !== undefined) {
+                await req.Embed(periods[classIndex], currentPeriod, notifyChannel);
+                notifyChannel.send('@here');
             }
+            return setTimeout(notify, 2 * 60 * 1000);
         }
     }
-    console.log(`${x++} passed`);
     return setTimeout(notify, 2 * 1000);
 }
 
-
 async function Embed(startTime, subject, channel) {
-    let endTime = time.changeMinutes(startTime, 50);
-    req = await sheetsapi.callAPI(2, 'A2:H20');
+    const endTime = time.changeMinutes(startTime, 50);
+    let req = await sheetsapi.callAPI(2, 'A2:H20');
     req.arrayToObject();
     const data = req.body;
 
@@ -67,13 +63,11 @@ async function Embed(startTime, subject, channel) {
     newEmbed.sendEmbed(channel);
 }
 
-
-// public functions that will be used in your index.js file
 module.exports = {
-    // pass in discord.js channel for spam function
     setChannel: (channel) => {
         notifyChannel = channel;
     },
     getChannel: () => notifyChannel || undefined,
-    notify: notify
+    notify: notify,
+    Embed: Embed
 }
