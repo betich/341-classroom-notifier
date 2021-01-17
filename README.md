@@ -7,7 +7,7 @@ yes.
 - [x] Static time table
 - [x] Dynamic time table
 - [x] Time Table API
-- [ ] Auto Notification
+- [x] Auto Notification
 - [ ] Home work
 
 ## How to set up
