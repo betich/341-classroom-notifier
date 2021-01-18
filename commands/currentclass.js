@@ -1,6 +1,5 @@
 const time = require('./helper/time.js')
 const sheetsapi = require('./helper/sheetsapi.js');
-const { OnlineClass } = require('../onlineclass/onlineClass.js');
 const { Embed } = require('./helper/notify.js');
 
 const periods = [
@@ -18,9 +17,9 @@ module.exports = {
 	name: 'currentclass',
 	aliases: ['now', 'current'],
 	description: 'List this class',
-    uses: 'currentclass [all,a]',
+    uses: 'currentclass [dm, d, pm]',
 	execute(msg, args) {
-        const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
+        const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
         if (channel === msg.author) msg.react('772162743821664276' || '🤩');
 
 		if (time.getDay() >= 0 && time.getDay() <= 4) {

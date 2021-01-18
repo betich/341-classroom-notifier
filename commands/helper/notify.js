@@ -29,12 +29,12 @@ const notify = async () => {
         if (classIndex !== -1) {
         // Find if a period is happening now
             console.log(`${periods[classIndex]}, class ${classIndex+1} of ${days[time.getDay()]}`);
-            req = await sheetsapi.callAPI(1, 'A1:L6');
+            let req = await sheetsapi.callAPI(1, 'A1:L6');
             req.removeBreakTime(); // filter data
             let currentPeriod = req.body[time.getDay()][classIndex]; // current class
             
             if (currentPeriod !== '' && currentPeriod !== undefined) {
-                await req.Embed(periods[classIndex], currentPeriod, notifyChannel);
+                await Embed(periods[classIndex], currentPeriod, notifyChannel);
                 notifyChannel.send('@here');
             }
             return setTimeout(notify, 2 * 60 * 1000);
@@ -49,7 +49,7 @@ async function Embed(startTime, subject, channel) {
     req.arrayToObject();
     const data = req.body;
 
-    let subjectData = data[data.findIndex((subData) => subData.subject === subject)];
+    let subjectData = data[data.findIndex((Class) => Class.subject === subject)];
     let teacher = subjectData.teacher;
     let meeting = {
         "site": subjectData.link,

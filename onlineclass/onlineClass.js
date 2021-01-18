@@ -38,11 +38,10 @@ class OnlineClass {
     }
 
     sendEmbed (channel) {
-        findById(this.classId, thumbnails)
         const thumbnailPath = findById(this.classId, thumbnails);
         const attachment = new Discord.MessageAttachment(`./thumbnails/${thumbnailPath}`, thumbnailPath);
         const embed = new Discord.MessageEmbed()
-            .setColor(config.embed_color) //Yellow
+            .setColor(config.embed_color)
             .setTitle('Online Classroom')
             .setAuthor(this.teacher)
             .attachFiles(attachment)

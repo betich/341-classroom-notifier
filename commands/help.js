@@ -20,7 +20,7 @@ module.exports = {
             var Embed = new Discord.MessageEmbed()
                 .setColor(config.embed_color) //Yellow
                 .setTitle(`Commands List`)
-                .setDescription(commandsList.join(', '))
+                .setDescription(commandsList.join('\n'))
                 .setFooter(`You can send \`${config.prefix}help [command name]\` to get info on a specific command!`)
 
             return msg.channel.send(Embed)
@@ -37,7 +37,7 @@ module.exports = {
 
             var Embed = new Discord.MessageEmbed()
                 .setColor(config.embed_color) //Yellow
-                .setTitle(`\`${config.prefix + command.name}\``)
+                .setTitle(`\`${command.name}\``)
                 .addFields(...info)
                 .setDescription(command.description)
                 .setFooter(`You can send \`${config.prefix}help\` to get a list of every available commands`)

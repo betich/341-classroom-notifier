@@ -18,9 +18,9 @@ module.exports = {
 	name: 'classestoday',
 	aliases: ['listclasses', 'today'],
 	description: 'List all classes today',
-	uses: 'classestoday [all,a]',
+	uses: 'classestoday [dm, d, pm]',
 	execute(msg,args) {
-		const channel = (args && (args[0] == 'all' || args[0] == 'a')) ? msg.channel : msg.author;
+		const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
 		if (channel === msg.author) msg.react('772162743821664276' || '🤩');
 		
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
