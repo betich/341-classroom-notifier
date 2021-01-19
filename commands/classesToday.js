@@ -16,7 +16,7 @@ const periods = [
 
 module.exports = {
 	name: 'classestoday',
-	aliases: ['listclasses', 'today'],
+	aliases: ['listclasses', 'today', 't'],
 	description: 'List all classes today',
 	uses: 'classestoday [dm, d, pm]',
 	execute(msg,args) {

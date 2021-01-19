@@ -1,6 +1,6 @@
-const time = require('./helper/time.js')
+const Discord = require('discord.js');
 const sheetsapi = require('./helper/sheetsapi.js');
-const { Embed } = require('./helper/notify.js');
+const time = require('./helper/time.js');
 
 const periods = [
     "07:50",
@@ -14,15 +14,15 @@ const periods = [
 ];
 
 module.exports = {
-	name: 'currentclass',
-	aliases: ['now', 'current', 'n'],
-	description: 'List this class',
-    uses: 'currentclass [dm, d, pm]',
+	name: 'nextclass',
+	aliases: ['next', 'n'],
+	description: 'Returns the next class',
+    uses: 'nextclass [dm, d, pm]',
 	execute(msg, args) {
         const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
         if (channel === msg.author) msg.react('772162743821664276' || '🤩');
 
-		if (time.getDay() >= 0 && time.getDay() <= 4) {
+        if (time.getDay() >= 0 && time.getDay() <= 4) {
             const classIndex = periods.findIndex(elem => time.isInRange(elem, time.changeMinutes(elem, 50)));
 
             if ( classIndex === -1) {
@@ -33,7 +33,7 @@ module.exports = {
 		} else {
 			return channel.send('There are no classes today.');
 		}
-	}
+    }
 };
 
 async function exec (channel, classIndex) {

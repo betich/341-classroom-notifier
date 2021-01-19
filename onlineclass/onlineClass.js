@@ -56,7 +56,7 @@ class OnlineClass {
                 {name: 'Note', value: this.note}
             )
             .setTimestamp()
-            .setURL(this.meeting.site);
+            .setURL((this.meeting.site === '-' || this.meeting.site === '') ? "https://tuspoc.triamudom.ac.th/cms_tusindex.php" : this.meeting.site);
         
         channel.send({embed});
     }

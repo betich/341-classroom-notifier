@@ -5,7 +5,7 @@ const cfgPath = './config.json';
 module.exports = {
 	name: 'bind',
     description: 'Set bot up in a channel',
-    aliases: ['setup'],
+    aliases: ['setup', 'b'],
     uses: 'bind',
 	execute(msg) {
         if (!notify.getChannel() || notify.getChannel().id !== msg.channel.id) {

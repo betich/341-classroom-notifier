@@ -5,7 +5,7 @@ const fs = require('fs');
 
 module.exports = {
 	name: 'classinfo',
-	aliases: ['info', 'class', 'description'],
+	aliases: ['info', 'class', 'description', 'desc', 'i'],
 	description: 'Provide information for the class',
     uses: 'classinfo [subject] [dm, d, pm]',
 	execute(msg, args) {
@@ -51,7 +51,7 @@ async function exec (channel, subjectQuery) {
                 {name: 'Passcode', value: meeting.password, inline: true},
                 {name: 'Note', value: note}
             )
-            .setURL(meeting.site);
+            .setURL((meeting.site === '-' || meeting.site === '') ? "https://tuspoc.triamudom.ac.th/cms_tusindex.php" : meeting.site);
             
         channel.send({embed});
     } else {
