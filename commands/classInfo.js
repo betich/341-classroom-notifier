@@ -11,7 +11,7 @@ module.exports = {
 	execute(msg, args) {
         const subjectQuery = args[0];
         const channel = (args && (args[1] == 'dm' || args[1] == 'd' || args[1] == 'pm')) ? msg.author : msg.channel;
-        if (channel === msg.author) msg.react('772162743821664276' || '🤩');
+        if (channel === msg.author) react(msg);
 
         if (!subjectQuery) return cmdInfo(msg, subjectQuery);
         exec(channel, subjectQuery);
@@ -95,4 +95,12 @@ function getThumbnails(dir_path) {
         thumbnails.push(file);
     });
     return thumbnails
+}
+
+async function react(msg) {
+    try {
+        await msg.react('772162743821664276');
+    } catch {
+        await msg.react('🤩');
+    }
 }
