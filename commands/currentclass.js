@@ -20,7 +20,7 @@ module.exports = {
     uses: 'currentclass [dm, d, pm]',
 	execute(msg, args) {
         const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
-        if (channel === msg.author) msg.react('772162743821664276' || '🤩');
+        if (channel === msg.author) react(msg);
 
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
             const classIndex = periods.findIndex(elem => time.isInRange(elem, time.changeMinutes(elem, 50)));
@@ -45,5 +45,13 @@ async function exec (channel, classIndex) {
         await Embed(periods[classIndex], currentclass, channel);
     } else {
         return channel.send('There are no classes now')
+    }
+}
+
+async function react(msg) {
+    try {
+        await msg.react('772162743821664276');
+    } catch {
+        await msg.react('🤩');
     }
 }
