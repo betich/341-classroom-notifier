@@ -20,8 +20,8 @@ module.exports = {
 	description: 'List all classes today',
 	uses: 'classestoday [dm, d, pm]',
 	execute(msg,args) {
-		const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
-		if (channel === msg.author) msg.react('772162743821664276' || '🤩');
+        const channel = (args && (args[0] == 'dm' || args[0] == 'd' || args[0] == 'pm')) ? msg.author : msg.channel;
+        if (channel === msg.author) react(msg);
 		
 		if (time.getDay() >= 0 && time.getDay() <= 4) {
 			exec(channel);
@@ -55,4 +55,12 @@ async function exec(channel) {
 	} else {
 		return channel.send('There are no classes today.')
 	}
+}
+
+async function react(msg) {
+    try {
+        await msg.react('772162743821664276');
+    } catch {
+        await msg.react('🤩');
+    }
 }
