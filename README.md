@@ -1,6 +1,8 @@
 # classroom-notifier
 yes.
 
+data taken from: [341's google sheets](https://docs.google.com/spreadsheets/d/1dr00FcWgeZVLsFP_959YtQ6GGNgoPaRUNbaIu7ujY50/edit?usp=sharing)
+
 ## TODO
 - [x] Embed Sender
 - [x] Time table
